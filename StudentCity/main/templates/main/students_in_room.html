@@ -6,6 +6,7 @@
     <div class="room-info">
         <p>Общежитие №{{ room.dorm.num_dorm }}</p>
         <p>Проживает: {{ room.residents_count }} чел.</p>
+        <p>Удобства: {% for f in room.facilities.all %}{{ f.name }}{% if not forloop.last %}, {% endif %}{% empty %}не указаны{% endfor %}</p>
         <a href="{% url 'dorm_rooms' room.dorm.id %}" class="btn-back">
             ← Назад к комнатам общежития
         </a>

@@ -1,5 +1,8 @@
-from django.db import models
 from datetime import date
+from django.conf import settings
+from django.db import models
+from .utils import unique_slug
+
 
 class Dormitory(models.Model):
     num_dorm = models.CharField(verbose_name='Номер общежития', max_length=10)
@@ -8,23 +11,27 @@ class Dormitory(models.Model):
     def __str__(self):
         return f"Общежитие №{self.num_dorm}"
 
+
 class Facility(models.Model):
     name = models.CharField(verbose_name='Название удобства', max_length=50, unique=True)
 
     def __str__(self):
         return self.name
 
+
 class Rooms(models.Model):
     dorm = models.ForeignKey(to='Dormitory', on_delete=models.PROTECT, verbose_name='Номер общежития', null=True)
     num_room = models.CharField(verbose_name='Номер комнаты', max_length=10)
-    # Связь многие ко многим
     facilities = models.ManyToManyField(to='Facility', verbose_name='Удобства', blank=True)
 
     def __str__(self):
+        if self.dorm is None:
+            return f"Комната {self.num_room}"
         return f"Комната {self.num_room} (Общ. №{self.dorm.num_dorm})"
 
     def residents_count(self):
         return self.student_set.count()
+
 
 class Student(models.Model):
     first_name = models.CharField(verbose_name='Имя', max_length=50)
@@ -41,6 +48,13 @@ class Student(models.Model):
     visa_ending = models.DateField(verbose_name='Дата окончания визы', default=date(year=2000, month=1, day=1), blank=True, null=True)
     photo = models.ImageField(verbose_name='Фото', upload_to='photos/%Y/%m/%d', null=True, blank=True)
     slug = models.SlugField(verbose_name='URL', max_length=255, unique=True, db_index=True)
+    owner = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Кто добавил',
+                              null=True, blank=True, related_name='students')
 
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = unique_slug(Student, f"{self.last_name} {self.first_name}")
+        super().save(*args, **kwargs)

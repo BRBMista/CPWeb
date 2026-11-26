@@ -5,12 +5,12 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-SECRET_KEY = 'django-insecure-+hc-@qy(m+&03b+q3r#k@j8tdr^))=q(byq($rxf7s5n4qomd@'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-+hc-@qy(m+&03b+q3r#k@j8tdr^))=q(byq($rxf7s5n4qomd@')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -24,6 +24,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'django_filters',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -62,9 +65,9 @@ WSGI_APPLICATION = 'StudentCity.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'course_db',
-        'USER': 'postgres',
-        'PASSWORD': 'secretpassword',
+        'NAME': os.environ.get('DB_NAME', 'course_db'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'secretpassword'),
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -93,7 +96,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'Europe/Moscow'
 
@@ -106,6 +109,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = 'login'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 
 # Email

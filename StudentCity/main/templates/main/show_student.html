@@ -39,6 +39,10 @@
                     <span class="info-value">{{ student.group }}</span>
                 </div>
                 <div class="info-row">
+                    <span class="info-label">Добавил в систему:</span>
+                    <span class="info-value">{{ student.owner.username|default:"Не указан" }}</span>
+                </div>
+                <div class="info-row">
                     <span class="info-label">Статус:</span>
                     <span class="info-value status-badge">
                         {% if student.is_study %}Обучается{% else %}Не обучается{% endif %}
@@ -81,7 +85,7 @@
                 </div>
                 <div class="info-row">
                     <span class="info-label">Окончание визы:</span>
-                    <span class="info-value {% if student.visa_ending < today %}visa-expired{% endif %}">
+                    <span class="info-value {% if student.visa_ending and student.visa_ending < today %}visa-expired{% endif %}">
                         {{ student.visa_ending|date:"d.m.Y"|default:"Не указана" }}
                     </span>
                 </div>
