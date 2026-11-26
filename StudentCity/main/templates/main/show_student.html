@@ -1,0 +1,93 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="student-detail-container">
+    <div class="student-header">
+        <h1>{{ student.last_name }} {{ student.first_name }} {{ student.middle_name }}</h1>
+        <a href="{% url 'students' %}" class="btn-back">← Назад к списку</a>
+    </div>
+
+    <div class="student-info-grid">
+        <div class="student-photo-column">
+            <div class="photo-card">
+                <h3>Фотография</h3>
+                <div class="photo-frame">
+                    {% if student.photo %}
+                        <img src="{{ student.photo.url }}" alt="{{ student.last_name }}">
+                    {% else %}
+                        <div class="no-photo-placeholder">
+                            <span>Фото отсутствует</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="student-data-column">
+            <div class="info-section">
+                <h2>Основная информация</h2>
+                <div class="info-row">
+                    <span class="info-label">Дата рождения:</span>
+                    <span class="info-value">{{ student.birth_date|date:"d.m.Y" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Курс:</span>
+                    <span class="info-value">{{ student.course }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Группа:</span>
+                    <span class="info-value">{{ student.group }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Статус:</span>
+                    <span class="info-value status-badge">
+                        {% if student.is_study %}Обучается{% else %}Не обучается{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2>Проживание</h2>
+                <div class="info-row">
+                    <span class="info-label">Город:</span>
+                    <span class="info-value">{{ student.city }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Комната:</span>
+                    <span class="info-value">
+                        {% if student.room %}
+                            <a href="{% url 'students_in_room' student.room.id %}">
+                                {{ student.room.num_room }} (Общежитие №{{ student.room.dorm.num_dorm }})
+                            </a>
+                        {% else %}
+                            Не размещён
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2>Гражданство и виза</h2>
+                <div class="info-row">
+                    <span class="info-label">Гражданство:</span>
+                    <span class="info-value">
+                        {% if student.nation %}Гражданин России{% else %}Иностранец{% endif %}
+                    </span>
+                </div>
+                {% if not student.nation %}
+                <div class="info-row">
+                    <span class="info-label">Номер визы:</span>
+                    <span class="info-value">{{ student.visa_num|default:"Не указан" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Окончание визы:</span>
+                    <span class="info-value {% if student.visa_ending < today %}visa-expired{% endif %}">
+                        {{ student.visa_ending|date:"d.m.Y"|default:"Не указана" }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

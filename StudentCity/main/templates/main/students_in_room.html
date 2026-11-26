@@ -1,0 +1,52 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="room-header">
+    <h1>Комната {{ room.num_room }}</h1>
+    <div class="room-info">
+        <p>Общежитие №{{ room.dorm.num_dorm }}</p>
+        <p>Проживает: {{ room.residents_count }} чел.</p>
+        <a href="{% url 'dorm_rooms' room.dorm.id %}" class="btn-back">
+            ← Назад к комнатам общежития
+        </a>
+    </div>
+</div>
+
+{% if students %}
+<div class="students-container">
+    <div class="students-header">
+        <div class="student-field student-name">ФИО студента</div>
+        <div class="student-field student-course">Курс</div>
+        <div class="student-field student-group">Группа</div>
+    </div>
+
+    <div class="students-list">
+        {% for student in students %}
+        <div class="student-card {% if not student.is_study %}inactive{% endif %}">
+            <div class="student-field student-name">
+                <span class="field-label">ФИО:</span>
+                <span class="field-value">
+                    {{ student.last_name }} {{ student.first_name }}
+                </span>
+            </div>
+            <div class="student-field student-course">
+                <span class="field-label">Курс:</span>
+                <span class="field-value">{{ student.course }}</span>
+            </div>
+            <div class="student-field student-group">
+                <span class="field-label">Группа:</span>
+                <span class="field-value">{{ student.group }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="no-students">
+    <div class="empty-state">
+        <h2>Комната пуста</h2>
+        <p>В этой комнате пока нет проживающих студентов</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

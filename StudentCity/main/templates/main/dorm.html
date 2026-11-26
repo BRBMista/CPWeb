@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="dorm-cards">
+    {% for d in dormitory %}
+    <div class="dorm-card">
+        <div class="dorm-number">Общежитие №{{ d.num_dorm }}</div>
+        <div class="dorm-rooms-info">
+            <strong>Комнат:</strong> {{ d.total_room }}
+        </div>
+        <a href="{% url 'dorm_rooms' d.id %}" class="btn-view"> Просмотреть комнаты → </a>
+    </div>
+    {% empty %}
+    <div class="no-dorms">
+        Общежития не найдены
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

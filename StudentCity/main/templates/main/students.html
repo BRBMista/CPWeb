@@ -1,0 +1,63 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="content">
+    <h1>{{ title }}</h1>
+    {% if auth %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'addstudent' %}" class="btn-view" style="width: auto; padding: 10px 20px;">+ Добавить студента</a>
+    </div>
+    {% endif %}
+
+    <form method="get" action="{% url 'students' %}" class="filter-form">
+        {{ st_filter.form.as_p }}
+        <button type="submit" class="btn-view" style="width: auto;">Искать</button>
+    </form>
+
+    {% if students %}
+    <div class="students_list">
+        <div class="students-header">
+            <div class="col-fio">Фамилия Имя</div>
+            <div class="col-course">Курс</div>
+            <div class="col-group">Группа</div>
+        </div>
+
+        {% for st in students %}
+        <a href="{% url 'student' stud_slug=st.slug %}" class="student-link">
+            <div class="student-item">
+                <div class="col-fio">{{ st.last_name }} {{ st.first_name }}</div>
+                <div class="col-course">{{ st.course }}</div>
+                <div class="col-group">{{ st.group }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Пагинация -->
+    {% if page_obj.has_other_pages %}
+    <nav class="list-pages">
+        <ul>
+            {% if page_obj.has_previous %}
+            <li class="page-num"><a href="?page={{ page_obj.previous_page_number }}">&lt;</a></li>
+            {% endif %}
+            
+            {% for p in paginator.page_range %}
+                {% if page_obj.number == p %}
+                    <li class="page-num page-num-selected">{{ p }}</li>
+                {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+                    <li class="page-num"><a href="?page={{ p }}">{{ p }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-num"><a href="?page={{ page_obj.next_page_number }}">&gt;</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <p class="no-students">Студенты не найдены</p>
+    {% endif %}
+</div>
+{% endblock %}

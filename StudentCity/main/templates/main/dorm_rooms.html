@@ -1,0 +1,43 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="dorm-header">
+    <h1>{{ title }}</h1>
+    <p>Всего комнат: {{ dorm.total_room }}</p>
+    <a href="{% url 'dorm' %}" class="btn-back">← Назад к списку общежитий</a>
+</div>
+
+{% if dorm_rooms %}
+<div class="rooms-container">
+    <div class="rooms-header">
+        <div class="room-field room-number">Номер комнаты</div>
+        <div class="room-field room-residents">Количество проживающих</div>
+        <div class="room-field room-action"></div>
+    </div>
+
+    <div class="rooms-list">
+        {% for room in dorm_rooms %}
+        <div class="room-card">
+            <div class="room-field room-number">
+                <span class="field-label">Номер:</span>
+                <span class="field-value">{{ room.num_room }}</span>
+            </div>
+
+            <div class="room-field room-residents">
+                <span class="field-label">Проживает:</span>
+                <span class="field-value">
+                    {{ room.residents_count }} чел.
+                </span>
+            </div>
+            
+            <div class="room-field room-action">
+                <a href="{% url 'students_in_room' room.id %}" class="btn-view">
+                    Посмотреть жильцов
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
